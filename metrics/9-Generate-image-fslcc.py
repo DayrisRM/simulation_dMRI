@@ -12,15 +12,15 @@ import sys
 import seaborn as sns
 
 SNRs = [3,5,10,20,40]
-methods = ['NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG'] #
-methods_names_short =  ['NLM', 'MPPCA', 'P2S','DDM2', 'AVG']
-list_colors = ['pink', 'blue', 'darkorange', 'lightseagreen', 'green']
+methods = ['Raw','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG'] #
+methods_names_short =  ['Noisy','NLM', 'MPPCA', 'P2S','DDM2', 'AVG']
+list_colors = ['gold','pink', 'blue', 'darkorange', 'lightseagreen', 'green']
 custom_palette = sns.color_palette(list_colors) # To get the same color palette than in seaborn
 
-iter = 8
+iter = 20
 exp = 'Exp6-data-rician'
 noise_type = 'Rician'
-metric = 'FA'
+metric = 'MD'
 
 dPath = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}'
 
@@ -41,11 +41,11 @@ for method in methods:
 print(data)
 
 # Crear la figura y los ejes
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(5,5))
 
 method_index = 0
 for method in methods:
-    ax.plot(SNRs, data[method], marker='o', label=method, color=list_colors[method_index])
+    ax.plot(SNRs, data[method], marker='o', label=methods_names_short[method_index], color=list_colors[method_index])
     method_index = method_index + 1
 
 ax.set_xlabel('SNR')
@@ -54,7 +54,7 @@ plt.title(metric)
 ax.legend()
 
 plt.tight_layout()
-plt.savefig(f'{dPath}/figures/{iter}_fslcc{metric}_screenshots.png')
+plt.savefig(f'{dPath}/figures/{noise_type}{iter}_fslcc{metric}_screenshots.png')
 # Mostrar la gráfica
 plt.show()
 

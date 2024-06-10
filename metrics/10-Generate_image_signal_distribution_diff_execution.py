@@ -44,7 +44,7 @@ plt.plot(diff_ddm2_data_voxel1, 'o-', label=f'Voxel 1 - coords:{voxel1_coords}')
 plt.plot(diff_ddm2_data_voxel2, 'o-', label=f'Voxel 2 - coords {voxel2_coords}')
 
 plt.title('Individual voxel signal in the differential')
-plt.xlabel('b-values')
+plt.xlabel('Volumes')
 plt.ylabel('Signal')
 plt.legend()
 
