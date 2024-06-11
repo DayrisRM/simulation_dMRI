@@ -27,7 +27,7 @@ nrows = len(methods)
 ncols = 1
 fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(5,10), sharex=True) 
 
-snr=10
+snr=5
 x_limit = 0.8
 
 for i in range(0, nrows):    
@@ -37,7 +37,7 @@ for i in range(0, nrows):
     # Histogram
     ax[i].hist(ts_csf, color=custom_palette[i], bins=100, density=True, alpha=0.5)
     # Find the maximum of the histogram
-    hist, bin_edges = np.histogram(ts_csf[ts_csf>10], bins=100)
+    hist, bin_edges = np.histogram(ts_csf, bins=100) #[ts_csf>10]
     max_bin = np.argmax(hist)
     x_peak = (bin_edges[max_bin] + bin_edges[max_bin+1])/2
 
@@ -51,4 +51,4 @@ fig.suptitle(f'Noise distribution Dataset SNR={snr}', size=14)
 plt.tight_layout()  # Ajustar el espacio entre las subtramas
 plt.show()
 
-fig.savefig(f'{dPath}/figures/{iter}_fig5a_snr{snr}_noise_dist.png', dpi=600, bbox_inches='tight')
+fig.savefig(f'{dPath}/figures/{noise_type}_{iter}_fig5a_snr{snr}_noise_dist.png', dpi=600, bbox_inches='tight')
