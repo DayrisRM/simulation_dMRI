@@ -45,9 +45,7 @@ def calculate_snr(denoised_data_mask):
     snr = mean_signal / noise_std  # Calcula la SNR
     return snr
 
-def calculate_metric(metric_name, ground_truth, noisy_data, denoised_data):  
-    #difference = noisy_data - denoised_data  
-    #difference_in_mask = difference[mask_positions]
+def calculate_metric(metric_name, ground_truth, noisy_data, denoised_data):      
     
     if metric_name == 'rmse':
         #se calcula con la imagen original - GroundTruth        
@@ -64,13 +62,7 @@ def calculate_metric(metric_name, ground_truth, noisy_data, denoised_data):
         ground_truth_in_mask = ground_truth[mask_positions]
         denoised_in_mask = denoised_data[mask_positions]
         difference_grount_denoise_in_mask = ground_truth_in_mask - denoised_in_mask
-        max_pixel_value = np.max(difference_grount_denoise_in_mask)
-        #difference_grount_denoise = ground_truth - denoised_data   
-        #difference_grount_denoise_in_mask = difference_grount_denoise[mask_positions]
-        
-        #print(f'max_pixel:{max_pixel_value}')
-        #tipo_de_datos = difference_grount_denoise_in_mask.dtype
-        #print(f'tipo de datos:{tipo_de_datos}')
+        max_pixel_value = np.max(difference_grount_denoise_in_mask)        
         psnr = calculate_psnr(difference_grount_denoise_in_mask, max_pixel_value)
         return psnr
     if metric_name == 'ssmi':
@@ -101,58 +93,65 @@ methods = ['NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG'] #
 method_int = [0, 1, 2, 3]
 metric_names = ['rmse', 'r2', 'ssmi'] #, 'psnr', 'snr', 'ssmi', 'r2'
 iter = 20
-exp = 'Exp6-data-rician'
-noise_type = 'Rician'
+exp = 'Exp6-data-gaussian'
+noise_type = 'Gaussian'
 list_colors = ['pink', 'blue', 'darkorange', 'lightseagreen', 'green']
 
 
-mask = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/nodif_brain_mask.nii.gz')
-ground_truth = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
+mask = get_data(f'/Simulations/Experiments/{exp}/Dataset/nodif_brain_mask.nii.gz')
+ground_truth = get_data(f'/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
 
-# Identificar las posiciones donde la máscara tiene un valor de 1 (dentro del cerebro)
+# Identify the positions where the mask has value = 1 (inside the brain)
 mask_positions = np.where(mask == 1)
-dPath = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}'
+dPath = f'/Simulations/Experiments/{exp}'
 
 fig, axs = plt.subplots(1, 3, figsize=(15, 5))
 # Configurar tamaños de fuente específicos
 plt.rcParams.update({
-    'font.size': 11,       # Tamaño de fuente por defecto
-    'axes.titlesize': 12,  # Tamaño de fuente del título del gráfico
-    'axes.labelsize': 12,  # Tamaño de fuente de las etiquetas de los ejes
-    'xtick.labelsize': 11, # Tamaño de fuente de las etiquetas de las marcas del eje x
-    'ytick.labelsize': 11  # Tamaño de fuente de las etiquetas de las marcas del eje y
+    'font.size': 11,       
+    'axes.titlesize': 12, 
+    'axes.labelsize': 12,
+    'xtick.labelsize': 11,
+    'ytick.labelsize': 11
 })
-
 for ds, metric in enumerate(metric_names):    
     median_difference_methods = []
     for method in methods:
         print(f'method:{method}')
         differencebymethod = []
         for snr in SNRs:
+            if (method == 'DDM2' or method == 'Patch2Self') and snr == 3:
+                continue  # Omitir el método DDM2 y P2S con snr=3
             print(f'snr:{snr}')
             noisy_data = get_data(f'{dPath}/RAW/snr{snr}/main-{noise_type}-noisy_data_snr{snr}.nii.gz')
             denoised_data = get_data(f'{dPath}/{method}/snr{snr}/{method.lower()}-denoised_main_snr{snr}.nii.gz')
             
             difference = calculate_metric(metric, ground_truth, noisy_data, denoised_data)
             print(f'difference: {difference}')
-            differencebymethod.append(difference)
+            differencebymethod.append((snr, difference))  # Guardar pares (snr, diferencia)
 
         median_difference_methods.append(differencebymethod)
 
     print(differencebymethod)
     print(median_difference_methods)
 
-    #row = ds // 2
-    #col = ds % 2
-
     # Graficar los errores de cada método como una línea
     method_index = 0
     for method in methods:
-        axs[ds].plot(SNRs, median_difference_methods[method_index], marker='o', label=method, color=list_colors[method_index])
-        method_index = method_index + 1
+        if method == 'DDM2' or method == 'Patch2Self':
+            # Filtrar los valores para no incluir snr=3
+            filtered_data = [(snr, difference) for snr, difference in median_difference_methods[method_index] if snr != 3]
+            filtered_snr = [snr for snr, _ in filtered_data]
+            filtered_differences = [difference for _, difference in filtered_data]
+            axs[ds].plot(filtered_snr, filtered_differences, marker='o', label=method, color=list_colors[method_index])
+        else:
+            snr_values, differences = zip(*median_difference_methods[method_index])
+            axs[ds].plot(snr_values, differences, marker='o', label=method, color=list_colors[method_index])
+        method_index += 1
+
 
    
-    # Agregar etiquetas, título y leyenda
+   
     y_name = metric.upper()
     axs[ds].set_xlabel('SNR')
     axs[ds].set_ylabel('') 
@@ -161,9 +160,9 @@ for ds, metric in enumerate(metric_names):
     axs[2].legend()
         
     
-# Mostrar la gráfica
+
 plt.tight_layout()
-plt.savefig(f'{dPath}/figures/{iter}_metrics_group.png', dpi=600, bbox_inches='tight')
+plt.savefig(f'{dPath}/figures/{noise_type}_{iter}_Fig6_reconstruction_error_metrics.png', dpi=600, bbox_inches='tight')
 plt.show()
 
 

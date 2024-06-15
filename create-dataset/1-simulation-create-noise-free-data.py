@@ -29,22 +29,17 @@ class ball_and_sticks:
         self.bvals = bvals
         self.bvecs = bvecs
 
-    def add_noise(Sj, SNR, type_noise):
-        # b0vols = np.argwhere(bvals>50) # Get the b0 volumes, where there is no diffusion (pure T2 contrast)
-        # mean_b0vols = np.mean(Sj[b0vols])
-        # if mean_b0vols<0.000001: # Background voxels
-        #     mean_b0vols = 1
-        # sigma = mean_b0vols / SNR # SNR = mean(signal)/std(noise) --> mean(b0_vols)/sigma 
+    def add_noise(Sj, SNR, type_noise):        
         sigma = 1 / SNR 
         
         if type_noise == 'Gaussian':
             try:
                 random = np.random.normal(0, sigma, len(Sj))                
-                Sj_noise = Sj + random #sig * np.random.normal(0, s0/SNR, len(Sj))
+                Sj_noise = Sj + random
             except:                
                 print("Exception sigma")                
         elif type_noise == 'Rician':  # Noise in quadrature
-            noise_1 = np.random.normal(0, sigma, len(Sj))  #sigma or sigma**2?
+            noise_1 = np.random.normal(0, sigma, len(Sj)) 
             noise_2 = np.random.normal(0, sigma, len(Sj))
             Sj_noise = np.sqrt((Sj + noise_1) ** 2 + noise_2 ** 2)
 
@@ -63,8 +58,7 @@ class ball_and_sticks:
             fi = params[1 + 3 * i]
             sumf += fi
             th = params[2 + 3 * i]
-            phi = params[3 + 3 * i]
-            #v = np.array([params[3 + 3 * i], params[4 + 3 * i], params[5 + 3 * i]])
+            phi = params[3 + 3 * i]            
             v = np.array([np.sin(th) * np.cos(phi), np.sin(th) * np.sin(phi), np.cos(th)])  # conversion to cartesians
             signal += s0 * (fi * np.exp(-d * self.bvals * np.power(np.dot(self.bvecs.T, v), 2)))    # sticks contribution to the signal
 
@@ -118,7 +112,7 @@ def cart2sph(x,y,z):
   return r, theta, phi
 
 #Load files
-dPath = 'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/data'
+dPath = '/Simulations/data'
 data = get_data(f'{dPath}/data.nii.gz')
 mask = get_data(f'{dPath}/nodif_brain_mask.nii.gz')
 mean_d = get_data(f'{dPath}/data.bedpostX/mean_dsamples.nii.gz')

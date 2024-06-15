@@ -36,44 +36,41 @@ def get_data(file, mmap=True):
 SNRs = [5, 10]
 iter = 20
 
-dPath_gaussian = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/Exp6-data-gaussian'
-dPath_rician = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/Exp6-data-rician'
-ground_truth = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/Exp6-data-gaussian/Dataset/noisyfree_data_full_b0_first.nii.gz')
+dPath_gaussian = f'/Simulations/Experiments/Exp6-data-gaussian'
+dPath_rician = f'/Simulations/Experiments/Exp6-data-rician'
+ground_truth = get_data(f'/Simulations/Experiments/Exp6-data-gaussian/Dataset/noisyfree_data_full_b0_first.nii.gz')
 
-# Definir la posición específica
+# Position
 x, y, z = 51, 51, 35
 
 ground_truth_signal_timeseries = ground_truth[x, y, z, :]
 
-# Preparar los gráficos
 fig, ax = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(10, 4))
-
 colors = ['orange', 'green']
 
-# Crear diccionarios para almacenar las series temporales
+
 data_gaussian = {}
 data_rician = {}
 
-# Iterar sobre los valores de SNR
+
 for snr in SNRs:
     print(f'snr: {snr}')
 
-    # Cargar los datos ruidosos
+    # Load noisy data
     gaussian_noisy_data = get_data(f'{dPath_gaussian}/RAW/snr{snr}/main-Gaussian-noisy_data_snr{snr}.nii.gz')
     rician_noisy_data = get_data(f'{dPath_rician}/RAW/snr{snr}/main-Rician-noisy_data_snr{snr}.nii.gz')
     
-    # Extraer la serie temporal de la señal en la posición específica
+    #Extract the signal in position
     gaussian_signal_timeseries = gaussian_noisy_data[x, y, z, :]
-    rician_signal_timeseries = rician_noisy_data[x, y, z, :]
+    rician_signal_timeseries = rician_noisy_data[x, y, z, :]    
     
-    # Almacenar las series temporales en los diccionarios
     data_gaussian[snr] = gaussian_signal_timeseries
     data_rician[snr] = rician_signal_timeseries
 
 ax[0].plot(ground_truth_signal_timeseries, label='noise-free', color='black', linestyle = 'dashed')
 ax[1].plot(ground_truth_signal_timeseries, label='noise-free', color='black', linestyle = 'dashed')
 
-# Graficar las series temporales
+
 snr_index = 0
 for snr in SNRs:
     ax[0].plot(data_gaussian[snr], label=f'SNR={snr}', color=colors[snr_index])
@@ -92,7 +89,7 @@ ax[1].legend()
 
 plt.tight_layout()
 
-plt.savefig(f'{dPath_gaussian}/figures/{iter}_signal_intensities_in_position_screenshots.png')
+plt.savefig(f'{dPath_gaussian}/figures/{iter}_Fig2_signal_intensities_in_slice_screenshots.png')
 plt.show()
 
 

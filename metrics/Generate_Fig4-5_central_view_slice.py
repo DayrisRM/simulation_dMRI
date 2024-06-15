@@ -91,23 +91,23 @@ def getVMinMax(method, snr):
 
 def printGroundTruth(ground_truth):    
     plt.imshow(ndimage.rotate(ground_truth[:,:,36,65], 90), cmap='gray')
-    plt.xticks([])  # Oculta los valores en el eje x
-    plt.yticks([])  # Oculta los valores en el eje y
+    plt.xticks([])
+    plt.yticks([])
     plt.savefig(f'{dPath}/figures/{iter}_central_view_slice_ground-truth_screenshots.png')
     plt.show()
 
 
-SNRs = [3,5,10,20,40] #
-methods = ['Raw','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG'] #
-methods_plot_names = ['Noisy','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG'] #
+SNRs = [3,5,10,20,40]
+methods = ['Raw','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG']
+methods_plot_names = ['Noisy','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG']
 list_colors = ['gold', 'pink', 'blue', 'darkorange', 'lightseagreen', 'green']
 iter = 20
 exp = 'Exp6-data-gaussian'
 noise_type = 'Gaussian'
 
-ground_truth = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
-dPath = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}'
-mask = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/nodif_brain_mask.nii.gz')
+ground_truth = get_data(f'/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
+dPath = f'/Simulations/Experiments/{exp}'
+mask = get_data(f'/Simulations/Experiments/{exp}/Dataset/nodif_brain_mask.nii.gz')
 
 #Get ground-truth
 #print('Printing GroundTruth')
@@ -129,7 +129,7 @@ for ds, method in enumerate(methods):
         if method == 'Raw':
             name_data = f'main-{noise_type}-noisy_data_snr'
         
-        img = get_data(f'{dPath}/{method}/snr{snr}/{name_data}{snr}.nii.gz') #esta es la imagen denoised o el raw        
+        img = get_data(f'{dPath}/{method}/snr{snr}/{name_data}{snr}.nii.gz') #denoised dataset or raw     
         vmin, vmax = getVMinMax(method, snr)
         mask_expanded = np.expand_dims(mask, axis=-1)
         imagex = img * mask_expanded
@@ -143,5 +143,5 @@ for ds, method in enumerate(methods):
 plt.tight_layout()
 
 print('Saving fig')
-plt.savefig(f'{dPath}/figures/{iter}_central_view_slice_screenshots.png', dpi=600, bbox_inches='tight')
+plt.savefig(f'{dPath}/figures/{iter}_Fig4-5_central_view_slice_screenshots.png', dpi=600, bbox_inches='tight')
 

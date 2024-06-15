@@ -57,7 +57,7 @@ def plot_gaussian_rician_raw_noise():
     plt.legend(SNRs_leyend)
     fig.suptitle('Simulated distributions', fontsize=14)   
 
-    plt.savefig(f'{dPath_gaussian}/figures/{iter}_histogram_raw_rician_gaussian_noise_screenshots.png', dpi=600, bbox_inches='tight')
+    plt.savefig(f'{dPath_gaussian}/figures/{iter}_Fig1_histogram_raw_rician_gaussian_noise_screenshots.png', dpi=600, bbox_inches='tight')
     plt.show()
 
 
@@ -65,8 +65,8 @@ def plot_gaussian_rician_raw_noise():
 SNRs = [3,5,10,20,40]
 iter = 20
 
-dPath_gaussian = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/Exp6-data-gaussian'
-dPath_rician = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/Exp6-data-rician'
+dPath_gaussian = f'/Simulations/Experiments/Exp6-data-gaussian'
+dPath_rician = f'/Simulations/Experiments/Exp6-data-rician'
 
 
 plot_gaussian_rician_raw_noise()

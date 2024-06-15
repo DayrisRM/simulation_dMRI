@@ -45,11 +45,11 @@ def export_nifti(data, orig_data, output_path, name):
 
 
 #Load files
-dPath = 'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/noise-free-data'
+dPath = '/Simulations/noise-free-data'
 data = get_data(f'{dPath}/test-noisy_data_snr10_b0b1b2k.nii.gz')
 
 
-#los b0 son las primeras 5 dimensiones de mi array
+#b0s are the first 5 elements
 ax_signal = len(data.shape) - 1
 mean_nob0vols = np.mean(data[..., :5], axis=ax_signal)
 

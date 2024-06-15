@@ -26,7 +26,7 @@ snr = 10
 iter = 20
 method = 'DDM2'
 
-dPath_gaussian = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/Exp6-data-gaussian'
+dPath_gaussian = f'/Simulations/Experiments/Exp6-data-gaussian'
 
 exec1_ddm2_data = get_data(f'{dPath_gaussian}/{method}/snr{snr}/diff_executions/exec1_hardi150_denoised.nii.gz')
 exec2_ddm2_data = get_data(f'{dPath_gaussian}/{method}/snr{snr}/diff_executions/exec2_hardi150_denoised.nii.gz')
@@ -40,15 +40,15 @@ diff_ddm2_data_voxel2 = diff_ddm2_data[43, 51, 30]
 
 plt.figure(figsize=(10, 6))
 
-plt.plot(diff_ddm2_data_voxel1, 'o-', label=f'Voxel 1 - coords:{voxel1_coords}')
-plt.plot(diff_ddm2_data_voxel2, 'o-', label=f'Voxel 2 - coords {voxel2_coords}')
+plt.plot(diff_ddm2_data_voxel1, 'o-', label=f'Voxel 1')
+plt.plot(diff_ddm2_data_voxel2, 'o-', label=f'Voxel 2')
 
-plt.title('Individual voxel signal in the differential')
+plt.title('Difference between executions')
 plt.xlabel('Volumes')
 plt.ylabel('Signal')
 plt.legend()
 
-plt.savefig(f'{dPath_gaussian}/figures/{iter}_{method}_voxel_signal_in_differential_screenshots.png', dpi=600, bbox_inches='tight')
+plt.savefig(f'{dPath_gaussian}/figures/Fig17-{iter}_{method}_differences_two_exec_DDM2_screenshots.png', dpi=600, bbox_inches='tight')
 plt.show()
 
 

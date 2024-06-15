@@ -38,12 +38,12 @@ export_figures = True
 exp = 'Exp6-data-rician'
 noise_type = 'rician'
 
-mask = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/nodif_brain_mask.nii.gz')
-ground_truth = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
+mask = get_data(f'/Simulations/Experiments/{exp}/Dataset/nodif_brain_mask.nii.gz')
+ground_truth = get_data(f'/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
 
 # Identificar las posiciones donde la máscara tiene un valor de 1 (dentro del cerebro)
 mask_positions = np.where(mask == 1)
-dPath = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}'
+dPath = f'/Simulations/Experiments/{exp}'
 
 
 for ds, dataset in enumerate(SNRs):
@@ -76,10 +76,11 @@ for ds, dataset in enumerate(SNRs):
         ax[1, i].set_xlim(-0.8, 0.8)
         plt.setp(ax[1,i], yticks=[]) 
             
+    
 
     print('----')
     fig.suptitle(f'Dataset SNR={SNRs[ds]}', fontweight='bold', size=fig.dpi*0.4)
     plt.subplots_adjust(wspace=0.0, hspace=-0.25)
     fig.tight_layout()
     plt.show() 
-    fig.savefig(f'{dPath}/figures/{noise_type}_{iter}_fig4_snr{dataset}_screenshots.png', dpi=600, bbox_inches='tight')
+    fig.savefig(f'{dPath}/figures/{noise_type}_{iter}_Fig9_snr{dataset}_screenshots.png', dpi=600, bbox_inches='tight')

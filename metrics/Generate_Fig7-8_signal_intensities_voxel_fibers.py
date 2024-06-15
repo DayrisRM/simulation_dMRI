@@ -52,8 +52,8 @@ voxel_type = '1fib'
 
 x, y, z = get_voxel_coords(voxel_type)
 
-ground_truth = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
-dPath = f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}'
+ground_truth = get_data(f'/Simulations/Experiments/{exp}/Dataset/noisyfree_data_full_b0_first.nii.gz')
+dPath = f'/Simulations/Experiments/{exp}'
 
 signal_timeseries_ground_truth = ground_truth[x, y, z]
 
@@ -65,7 +65,7 @@ for ds, method in enumerate(methods):
     if method == 'Raw':
         name_data = f'main-{noise_type}-noisy_data_snr'
         
-    img = get_data(f'{dPath}/{method}/snr{snr}/{name_data}{snr}.nii.gz') #esta es la imagen denoised o el raw 
+    img = get_data(f'{dPath}/{method}/snr{snr}/{name_data}{snr}.nii.gz') #denoised dataset or raw dataset
     signal_timeseries = img[x, y, z]
     data_in_voxel[method] = signal_timeseries
 
@@ -74,7 +74,7 @@ fig, ax = plt.subplots(figsize=(5, 5))
 
 ax.plot(signal_timeseries_ground_truth, label='noise free', color='black', linestyle = 'dashed')
 
-# Graficar las series temporales
+
 method_index = 0
 for method in methods:
     ax.plot(data_in_voxel[method], label=methods_plot_names[method_index], color=list_colors[method_index])
@@ -86,6 +86,6 @@ plt.ylabel('Signal intensity')
 plt.legend()
 plt.title(f'SNR = {snr}')
 
-plt.savefig(f'{dPath}/figures/{noise_type}_{voxel_type}_{iter}_signal_bymethod_invoxel_snr{snr}_screenshots.png', dpi=600, bbox_inches='tight')
+plt.savefig(f'{dPath}/figures/Fig7-8_{noise_type}_{voxel_type}_{iter}_signal_intensities_voxels_fibers_bymethod_snr{snr}_screenshots.png', dpi=600, bbox_inches='tight')
 plt.show()
 

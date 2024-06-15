@@ -51,10 +51,10 @@ SNRs = [3,5,10,20,40] #3,5,10,20,40
 methods = ['Raw','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG']
 methods_plot_names = ['Noisy','NLMEANS','MPPCA','Patch2Self', 'DDM2', 'AVG']
 
-iter = 20
+iter = 21
 exp = 'Exp6-data-gaussian'
 noise_type = 'Gaussian'
-list_colors = ['gold','deeppink', 'blue', 'darkorange', 'lightseagreen', 'green']
+list_colors = ['gold','pink', 'blue', 'darkorange', 'lightseagreen', 'green']
 
 
 mask = get_data(f'C:/Users/dayri/Documents/UNED/TFM/Related_projects/Simulations/Simulations/Experiments/{exp}/Dataset/mean_f1samples_mask_new.nii.gz')
@@ -72,54 +72,61 @@ for method in methods:
     data1k[method] = []
     data2k[method] = []
 
-
 for method in methods:
     print(f'method:{method}')
     for snr in SNRs:
         print(f'snr:{snr}')
+        if (method == 'DDM2' or method == 'Patch2Self') and snr == 3:
+            continue  # Omitir los métodos DDM y P2S con snr=3
         name_data = f'{method.lower()}-denoised_main_snr'
         if method == 'Raw':
             name_data = f'main-{noise_type}-noisy_data_snr'
 
         denoised_data = get_data(f'{dPath}/{method}/snr{snr}/{name_data}{snr}.nii.gz')
-                
+
         median_b1, median_b2 = calculate_median_noise(denoised_data, bvals, mask)
+
         print(f'noisefloorb1: {median_b1}')
         print(f'noisefloorb2: {median_b2}')
-        data1k[method].append(median_b1)
-        data2k[method].append(median_b2)
-
+        data1k[method].append((snr, median_b1))
+        data2k[method].append((snr, median_b2))
 
 print(data1k)
-print(data1k)
-
+print(data2k)
 
 # Crear la figura y los ejes
 fig, ax = plt.subplots(1, 2)
-#markers = ['o', 's'] 
 
 # Graficar los errores de cada método como una línea
 method_index = 0
-linestyle= ['solid', 'dashdot', 'solid','--', 'solid']
+linestyle = ['solid', 'dashdot', 'solid', '--', 'solid']
 for method in methods:   
    print(method)
-   marker='o'
-   linestyle='solid'
-   if method == 'NLMEANS':
-       marker='X'
+   marker = 'o'
+   linestyle = 'solid'
+   #if method == 'NLMEANS':
+    #   marker = 'X'
    if method == 'Patch2Self':
-       linestyle='dashdot'
+       linestyle = 'dashdot'
+
+   # Filtrar los valores para no incluir snr=3 para los métodos DDM y P2S
+   filtered_snr_data1k = [(snr, value) for snr, value in data1k[method] if not ((method == 'DDM2' or method == 'Patch2Self') and snr == 3)]
+   filtered_snr_data2k = [(snr, value) for snr, value in data2k[method] if not ((method == 'DDM2' or method == 'Patch2Self') and snr == 3)]
+
+   # Separar SNRs y valores
+   filtered_snr1k = [snr for snr, _ in filtered_snr_data1k]
+   filtered_values1k = [value for _, value in filtered_snr_data1k]
+   filtered_snr2k = [snr for snr, _ in filtered_snr_data2k]
+   filtered_values2k = [value for _, value in filtered_snr_data2k]
+
+   # Graficar los datos filtrados
+   ax[0].plot(filtered_snr1k, filtered_values1k, marker=marker, label=methods_plot_names[method_index], color=list_colors[method_index], linestyle=linestyle)
+   ax[1].plot(filtered_snr2k, filtered_values2k, marker=marker, label=methods_plot_names[method_index], color=list_colors[method_index], linestyle=linestyle)
+
+   method_index += 1
 
 
-   #gausian noise
-   ax[0].plot(SNRs, data1k[method], marker=marker, label=methods_plot_names[method_index], color=list_colors[method_index], linestyle = linestyle)
-   ax[1].plot(SNRs, data2k[method], marker='o', label=methods_plot_names[method_index], color=list_colors[method_index], linestyle = linestyle)
 
-   #rician noise
-   #ax[0].plot(SNRs, data1k[method], marker='o', label=methods_plot_names[method_index], color=list_colors[method_index])
-   #ax[1].plot(SNRs, data2k[method], marker='o', label=methods_plot_names[method_index], color=list_colors[method_index])
-
-   method_index = method_index + 1
 
 
 # Agregar etiquetas, título y leyenda
